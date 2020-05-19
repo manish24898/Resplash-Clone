@@ -19,6 +19,7 @@
     "axios": "^0.19.2",
     "react": "16.11.0",
     "react-native": "0.62.2",
+    "react-native-floating-action": "^1.20.0",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-image-zoom-viewer": "^3.0.0",
     "react-native-reanimated": "^1.8.0",
