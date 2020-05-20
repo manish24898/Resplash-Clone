@@ -26,7 +26,6 @@ const HomeScreen = props => {
     dispatch(MainActions.fetchImages(page.current)).then(() => {
       page.current = page.current + 1;
     });
-    console.log('called');
   }, []);
 
   const fetchMoreImages = () => {
