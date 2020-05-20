@@ -36,7 +36,7 @@ const CollectionsScreen = props => {
 
   const renderCollectionCard = item => {
     return (
-      <TouchableWithoutFeedback onPress={()=>{console.log("preessed")}}>
+      <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('CollectionDetail', {item})}}>
       <View style={styles.collectionCard}>
         <Image
           source={{uri: item.cover_photo.urls.regular}}

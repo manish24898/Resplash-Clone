@@ -53,44 +53,22 @@ const DetailTile = props => {
 const ImageDetailsScreen = props => {
   const [isImageViewerVisible, setIsImageViewerVisible] = useState(false);
   const [isActionsVisible, setIsActionsVisible] = useState(true);
-  const [icons, setIcons] = useState({
-    
-  });
   const item = props.route.params.item;
 
-  useEffect(() => {
-    const load = async () => {
-      const statsIcon = Ionicons.getImageSource("md-stats", 10, "white");
-      const infoIcon = Ionicons.getImageSource("md-information-circle-outline", 10, "white");
-      const wallpaperIcon = Ionicons.getImageSource("md-image", 10, "white");
-      const downloadIcon = Ionicons.getImageSource("md-download", 10, "white");
-
-      const result = await Promise.all([statsIcon, infoIcon, wallpaperIcon, downloadIcon])
-      setIcons({
-        stats: result[0].uri,
-        info : result[1].uri,
-        wallpaper : result[2].uri,
-        download : result[3].uri
-      })
-    }
-    load();
-  }, [])
-
-    const actions = [
+  const actions = [
     {
       text: 'Stats',
-      textColor:'white',
-      textBackground:'black',
+      textColor: 'white',
+      textBackground: 'black',
       icon: require('../assets/analytics-outline.png'),
       name: 'bt_stats',
       color: 'black',
       position: 1,
-      
     },
     {
       text: 'Info',
-      textColor:'white',
-      textBackground:'black',
+      textColor: 'white',
+      textBackground: 'black',
       icon: require('../assets/information-circle-outline.png'),
       name: 'bt_info',
       color: 'black',
@@ -98,8 +76,8 @@ const ImageDetailsScreen = props => {
     },
     {
       text: 'Set as wallpaper',
-      textColor:'white',
-      textBackground:'black',
+      textColor: 'white',
+      textBackground: 'black',
       icon: require('../assets/image-outline.png'),
       name: 'bt_wallpaper',
       color: 'black',
@@ -107,22 +85,24 @@ const ImageDetailsScreen = props => {
     },
     {
       text: 'Download',
-      textColor:'white',
-      textBackground:'black',
+      textColor: 'white',
+      textBackground: 'black',
       icon: require('../assets/download-outline.png'),
       color: 'black',
       name: 'bt_download',
       position: 4,
     },
   ];
-  props.navigation.setOptions({
-    headerRight: () => (
-      <HeaderButtons HeaderButtonComponent={HeaderButtonComponent}>
-        <Item title="globe" iconName="md-globe" onPress={() => {}} />
-        <Item title="share" iconName="md-share" onPress={() => {}} />
-      </HeaderButtons>
-    ),
-  });
+  useEffect(() => {
+    props.navigation.setOptions({
+      headerRight: () => (
+        <HeaderButtons HeaderButtonComponent={HeaderButtonComponent}>
+          <Item title="globe" iconName="md-globe" onPress={() => {}} />
+          <Item title="share" iconName="md-share" onPress={() => {}} />
+        </HeaderButtons>
+      ),
+    });
+  }, []);
 
   return (
     <View style={{flex: 1}}>
@@ -278,8 +258,18 @@ const ImageDetailsScreen = props => {
         <FloatingAction
           floatingIcon={
             <View
-              style={{backgroundColor: 'black', justifyContent:'center', alignItems:'center', height: '100%', width: '100%'}}>
-              <Ionicons name={isActionsVisible ? "ios-arrow-down" : "ios-arrow-up"} color="white" size={25} />
+              style={{
+                backgroundColor: 'black',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%',
+                width: '100%',
+              }}>
+              <Ionicons
+                name={isActionsVisible ? 'ios-arrow-down' : 'ios-arrow-up'}
+                color="white"
+                size={25}
+              />
             </View>
           }
           overlayColor="rgba(255,255,255, 0.7)"
@@ -288,7 +278,9 @@ const ImageDetailsScreen = props => {
           onPressItem={name => {
             console.log(`selected button: ${name}`);
           }}
-          onStateChange={(state)=> {setIsActionsVisible(!state.isActive)}}
+          onStateChange={state => {
+            setIsActionsVisible(!state.isActive);
+          }}
         />
       </View>
     </View>

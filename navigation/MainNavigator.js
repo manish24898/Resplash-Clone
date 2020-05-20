@@ -8,6 +8,7 @@ import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import CustomHeaderButtom from '../components/HeaderButton';
 import {View, Button} from 'react-native';
 import ImageDetailsScreen from '../screens/ImageDetailsScreen';
+import CollectionDetailScreen from '../screens/CollectionDetailScreen';
 
 const HomeScreenStack = createStackNavigator();
 
@@ -72,6 +73,7 @@ const HomeStackNavigator = () => {
           };
         }}
       />
+      <StackNavigator.Screen name="CollectionDetail" component={CollectionDetailScreen} options={{headerTitle:''}} />
       <StackNavigator.Screen name="ImageDetails" component={ImageDetailsScreen} options={{headerTitle:''}} />
     </StackNavigator.Navigator>
   );
