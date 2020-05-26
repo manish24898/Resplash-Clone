@@ -16,7 +16,10 @@ let TouchableCmp =
     ? TouchableNativeFeedback
     : TouchableOpacity;
 
-
+function getRandomColor() {
+  var v = ((Math.random() * 256) | 0).toString(16);
+  return '#' + v + v + v;
+}
 
 const ImageTile = props => {
   const resizeHeightScale = props.item.height / props.item.width;
@@ -31,9 +34,12 @@ const ImageTile = props => {
         style={{
           ...styles.main,
           height: Dimensions.get('window').width * resizeHeightScale,
+          backgroundColor: props.backgroundColor
+            ? props.backgroundColor
+            : getRandomColor(),
         }}>
         <View style={{flex: 1}}>
-           <Image
+          <Image
             style={{width: '100%', height: '100%'}}
             source={{uri: props.item.urls.regular}}
           />

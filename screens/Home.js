@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {View, Text, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import * as MainActions from '../store/actions/main';
 import {getGuest, AccessKey} from '../config/apiConfig';
@@ -7,39 +7,43 @@ import ImageTile from '../components/ImageTile';
 import {FloatingAction} from 'react-native-floating-action';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
-  for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-}
-
 const HomeScreen = props => {
+  const [intialLoading, setInitialLoading] = useState(false);
   const page = useRef(1);
   const dispatch = useDispatch();
   const updatedData = useSelector(state => state.images.images);
-  console.log('size:', updatedData.length);
-
+  let reload = updatedData.length === 0 ? true : false
+  if (updatedData.length === 0){
+    page.current = 1;
+  }
+  //console.log("noeew , page", page.current)
   useEffect(() => {
-    dispatch(MainActions.fetchImages(page.current)).then(() => {
-      page.current = page.current + 1;
-    });
-  }, []);
+    //console.log('name', props.route.params.loadHome.name)
+    let loader = props.route.params.loadHome;
+    setInitialLoading(true);
+     dispatch(loader(page.current)).then(() => {
+       page.current = page.current + 1;
+       setInitialLoading(false)
+     }).catch((err) => {
+       setInitialLoading(false);
+     });
+  }, [reload]);
+
 
   const fetchMoreImages = () => {
-    dispatch(MainActions.fetchImages(page.current)).then(() => {
+    let loader = props.route.params.loadHome;
+    dispatch(loader(page.current)).then(() => {
       page.current = page.current + 1;
     });
   };
 
   return (
     <View style={styles.main}>
-      <FlatList
+      {intialLoading ? <ActivityIndicator size="large" color="black" /> : <FlatList
         data={updatedData}
         renderItem={itemData => (
           <ImageTile
+            backgroundColor={itemData.item.color}
             item={itemData.item}
             onPress={() => {
               props.navigation.navigate('ImageDetails', {item: itemData.item});
@@ -48,7 +52,8 @@ const HomeScreen = props => {
         )}
         onEndReachedThreshold={1}
         onEndReached={fetchMoreImages}
-      />
+      />}
+      
       <FloatingAction
         floatingIcon={
           <View

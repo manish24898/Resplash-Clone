@@ -1,4 +1,4 @@
-import { FETCH_IMAGES, FETCH_COLLECTIONS } from "../actions/main";
+import { FETCH_IMAGES, FETCH_COLLECTIONS, RESET_IMAGES, RESET_COLLECTIONS } from "../actions/main";
 
 const initialState = {
     images:[],
@@ -17,6 +17,16 @@ export const imagesReducer = (state=initialState, action) => {
             return {
                 ...state,
                 collections:[...state.collections, ...action.data]
+            }
+        case RESET_IMAGES:
+            return {
+                ...state,
+                images:[]
+            }
+        case RESET_COLLECTIONS:
+            return {
+                ...state,
+                collections:[]
             }
         default:
             return state;

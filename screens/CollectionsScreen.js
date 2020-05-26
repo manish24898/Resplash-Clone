@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   Dimensions,
   Image,
+  ActivityIndicator
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {FloatingAction} from 'react-native-floating-action';
@@ -23,16 +24,25 @@ const CollectionName = crops => {
 };
 
 const CollectionsScreen = props => {
+  const [initialLoading, setInitialLoading] = useState(false);
   const page = useRef(1);
   const dispatch = useDispatch();
   const updatedData = useSelector(state => state.images.collections);
-  console.log('size:', updatedData.length);
-
+  //console.log('size:', updatedData.length);
+  let reload = updatedData.length === 0 ? true : false
+  if (updatedData.length === 0){
+    page.current = 1;
+  }
   useEffect(() => {
-    dispatch(MainActions.fetchCollections(page.current)).then(() => {
+    setInitialLoading(true);
+    let loader = props.route.params.loadCollections;
+    dispatch(loader(page.current)).then(() => {
       page.current = page.current + 1;
+      setInitialLoading(false);
+    }).catch((err) => {
+      setInitialLoading(false)
     });
-  }, []);
+  }, [reload]);
 
   const renderCollectionCard = item => {
     return (
@@ -48,19 +58,20 @@ const CollectionsScreen = props => {
   };
 
   const fetchMoreCollections = () => {
-    dispatch(MainActions.fetchCollections(page.current)).then(() => {
+    let loader = props.route.params.loadCollections;
+    dispatch(loader(page.current)).then(() => {
       page.current = page.current + 1;
     });
   };
 
   return (
     <View style={styles.main}>
-      <FlatList
+      {initialLoading ? <ActivityIndicator size="large" color="black" /> : <FlatList
         data={updatedData}
         renderItem={itemData => renderCollectionCard(itemData.item)}
         onEndReachedThreshold={1}
         onEndReached={fetchMoreCollections}
-      />
+      />}
       <FloatingAction
         floatingIcon={
           <View style={styles.bt_upload}>

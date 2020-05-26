@@ -1,3 +1,6 @@
+import 'react-native-gesture-handler';
+import { enableScreens } from 'react-native-screens';
+enableScreens();
 import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import {combineReducers, applyMiddleware, createStore} from 'redux';
