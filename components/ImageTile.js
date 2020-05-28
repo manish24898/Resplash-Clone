@@ -41,7 +41,7 @@ const ImageTile = props => {
         <View style={{flex: 1}}>
           <Image
             style={{width: '100%', height: '100%'}}
-            source={{uri: props.item.urls.regular}}
+            source={{uri: props.item.urls.small}}
           />
         </View>
       </View>
