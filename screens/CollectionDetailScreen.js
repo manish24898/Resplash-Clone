@@ -18,7 +18,7 @@ const CollectionDetailScreen = props => {
   const [initialLoading, setInitialLoading] = useState(false);
   const [updatedData, setUpdatedData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState({isError:false, msg:null})
+  const [error, setError] = useState(false)
   const item = props.route.params.item;
   const page = useRef(1);
   useEffect(() => {
@@ -37,6 +37,7 @@ const CollectionDetailScreen = props => {
   }, []);
 
   useEffect(() => {
+    setError(false)
     const getImages = async () => {
       let response;
       try {
@@ -48,11 +49,10 @@ const CollectionDetailScreen = props => {
           },
         });
         page.current = page.current + 1;
-        setError({isError:false, msg:null})
         setUpdatedData([...response.data]);
         setInitialLoading(false);
       } catch (err) {
-        setError({isError:true, msg:err[0].Error})
+        setError(true)
         setInitialLoading(false);
       }
     };
@@ -61,6 +61,7 @@ const CollectionDetailScreen = props => {
   }, []);
 
   const fetchMoreImages = () => {
+    setError(false)
     const getImages = async () => {
       let response;
       try {
@@ -72,11 +73,9 @@ const CollectionDetailScreen = props => {
           },
         });
         page.current = page.current + 1;
-        setError({isError:false, msg:null})
         setUpdatedData(data => [...data, ...response.data]);
       } catch (err) {
-        console.log(err);
-        setError({isError:true, msg:err[0].Error})
+        setError(true)
       }
     };
     getImages();
@@ -86,7 +85,7 @@ const CollectionDetailScreen = props => {
     setRefreshing(true);
     setInitialLoading(true);
     page.current = 1;
-
+    setError(false)
     const getImages = async () => {
       let response;
       try {
@@ -101,12 +100,10 @@ const CollectionDetailScreen = props => {
         setUpdatedData([...response.data]);
         setInitialLoading(false);
         setRefreshing(false);
-        setError({isError:false, msg:null})
       } catch (err) {
-        console.log(err);
         setInitialLoading(false);
         setRefreshing(false);
-        setError({isError:true, msg:err[0].Error})
+        setError(true)
       }
     };
     getImages();
@@ -151,13 +148,13 @@ const CollectionDetailScreen = props => {
           color="grey"
           size="large"
         />
-      ) : updatedData.length === 0 || error.isError ? (
+      ) : updatedData.length === 0 || error ? (
         
           <FlatList
           data={[1]}
           refreshing={refreshing}
           onRefresh={pullToRefreshHandler}
-          renderItem={itemData => <ErrorImage text={error.isError ? error.msg : "Nothing here!"} />}
+          renderItem={itemData => <ErrorImage text={error ? "Something Went Wrong" : "Nothing here!"} />}
           keyExtractor={item => item} />
         
       ) : (

@@ -5,10 +5,12 @@ import {View, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {FloatingAction} from 'react-native-floating-action';
 import CollectionCard from '../components/CollectionCard';
+import ErrorImage from '../components/ErrorImage'
 
 const CollectionsScreen = props => {
   const [initialLoading, setInitialLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(false);
   const page = useRef(1);
   const dispatch = useDispatch();
   const updatedData = useSelector(state => state.images.collections);
@@ -18,6 +20,7 @@ const CollectionsScreen = props => {
   }
   useEffect(() => {
     setInitialLoading(true);
+    setError(false);
     let loader = props.route.params.loadCollections;
     dispatch(loader(page.current))
       .then(() => {
@@ -25,6 +28,7 @@ const CollectionsScreen = props => {
         setInitialLoading(false);
       })
       .catch(err => {
+        setError(true);
         setInitialLoading(false);
       });
   }, [reload]);
@@ -32,7 +36,7 @@ const CollectionsScreen = props => {
   const pullToRefreshHandler = () => {
     setRefreshing(true);
     setInitialLoading(true);
-
+    setError(false);
     dispatch(MainActions.resetCollections())
       .then(() => {
         let loader = props.route.params.loadCollections;
@@ -46,25 +50,40 @@ const CollectionsScreen = props => {
           .catch(err => {
             setRefreshing(false);
             setInitialLoading(false);
+            setError(true);
           });
       })
       .catch(err => {
         setRefreshing(false);
         setInitialLoading(false);
+        setError(true);
       });
   };
 
   const fetchMoreCollections = () => {
     let loader = props.route.params.loadCollections;
-    dispatch(loader(page.current)).then(() => {
-      page.current = page.current + 1;
-    });
+    dispatch(loader(page.current))
+      .then(() => {
+        page.current = page.current + 1;
+      })
+      .catch(err => {
+        setError(true);
+      });
   };
 
   return (
     <View style={styles.main}>
       {initialLoading ? (
         <ActivityIndicator size="large" color="black" />
+      ) : error ? (
+        <FlatList
+          style={{marginTop: 100}}
+          data={[1]}
+          renderItem={() => <ErrorImage text="Something Went Wrong..." />}
+          refreshing={refreshing}
+          onRefresh={pullToRefreshHandler}
+          keyExtractor={item => Math.random()}
+        />
       ) : (
         <FlatList
           data={updatedData}

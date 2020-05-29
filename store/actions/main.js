@@ -21,22 +21,15 @@ export const resetCollections = () => {
 export const fetchImages =(order_by ,page) => {
   //console.log("DISPATCH", order_by)
   return async dispatch => {
-    let response;
-    try {
-      response = await getGuest.get('photos', {
+    let response = await getGuest.get('photos', {
         params: {
           page: page,
           per_page:30,
           client_id: AccessKey,
-          
+          order_by
           
         },
       });
-    } catch (err) {
-      console.log(err);
-      return;
-    }
-    //console.log("RESPONSE", response.data)
     dispatch({
       type: FETCH_IMAGES,
       data: response.data,
@@ -46,20 +39,13 @@ export const fetchImages =(order_by ,page) => {
 
 export const fetchCollectionsAll = page => {
   return async dispatch => {
-    let response;
-    try {
-      response = await getGuest.get('collections', {
+    let response = await getGuest.get('collections', {
         params: {
           page: page,
           per_page:30,
           client_id: AccessKey,
         },
       });
-    } catch (err) {
-      console.log(err);
-      return;
-    }
-
     dispatch({
       type: FETCH_COLLECTIONS,
       data: response.data,
@@ -69,20 +55,13 @@ export const fetchCollectionsAll = page => {
 
 export const fetchCollectionsFeatured = page => {
   return async dispatch => {
-    let response;
-    try {
-      response = await getGuest.get('collections/featured', {
+    let response = await getGuest.get('collections/featured', {
         params: {
           page: page,
           per_page:30,
           client_id: AccessKey,
         },
       });
-    } catch (err) {
-      console.log(err);
-      return
-    }
-
     dispatch({
       type: FETCH_COLLECTIONS,
       data: response.data,

@@ -28,7 +28,6 @@ import {FloatingAction} from 'react-native-floating-action';
 import * as CustomModal from 'react-native-modal';
 import {check, request, RESULTS, PERMISSIONS} from 'react-native-permissions';
 import WallpaperManager from 'react-native-wallpaper-enhanced';
-
 const TouchableCmp =
   Platform.OS === 'android' && Platform.Version >= 21
     ? TouchableNativeFeedback
@@ -76,7 +75,7 @@ const ImageDetailsScreen = props => {
   const [btStats, setBtStats] = useState(false);
   const [btInfo, setBtInfo] = useState(false);
   const [btWallpaper, setBtWallpaper] = useState(false);
-
+  const [error, setError] = useState(false);
   const [statsData, setStatsData] = useState({set: false, data: null});
   const [infoData, setInfoData] = useState({set: false, data: null});
   const [modalLoading, setModalLoading] = useState(false);
@@ -143,7 +142,7 @@ const ImageDetailsScreen = props => {
           break;
         case RESULTS.BLOCKED:
           console.log(
-            'The permission is denied and not requestable anymore.. show alert',
+            alert("The permission is denied, and not rquestable animore, allow in settings")
           );
           return;
       }
@@ -151,6 +150,7 @@ const ImageDetailsScreen = props => {
   };
 
   const loadInfoContents = async () => {
+    setError(false)
     let response;
     try {
       setModalLoading(true);
@@ -163,12 +163,13 @@ const ImageDetailsScreen = props => {
       setInfoData({set: true, data: response.data});
       setModalLoading(false);
     } catch (err) {
-      console.log(err);
+      setError(true);
       setModalLoading(false);
     }
   };
 
   const loadStatsContents = async () => {
+    setError(false)
     let response;
     try {
       setModalLoading(true);
@@ -181,7 +182,7 @@ const ImageDetailsScreen = props => {
       setStatsData({set: true, data: response.data});
       setModalLoading(false);
     } catch (err) {
-      console.log(err);
+      setError(true)
       setModalLoading(false);
     }
   };
@@ -454,6 +455,7 @@ const ImageDetailsScreen = props => {
                 </ModalItem>
               </View>
             )}
+            {error && <Text>Something Went Wrong...</Text>}
           </View>
         </CustomModal.ReactNativeModal>
       )}
@@ -538,6 +540,7 @@ const ImageDetailsScreen = props => {
                 </ModalItem>
               </View>
             )}
+            {error && <Text>Something Went Wrong...</Text>}
           </View>
         </CustomModal.ReactNativeModal>
       )}

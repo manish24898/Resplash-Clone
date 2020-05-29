@@ -7,10 +7,13 @@ import {
   Dimensions,
 } from 'react-native';
 import {getGuest, AccessKey} from '../../config/apiConfig';
-import CollectionCard from '../../components/CollectionCard'
+import CollectionCard from '../../components/CollectionCard';
+import ErrorImage from '../../components/ErrorImage'
+
 const UserCollectionsTab = props => {
   const [initialLoading, setInitialLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(false);
   const [updatedData, setUpdatedData] = useState([]);
   const page = useRef(1);
 
@@ -29,7 +32,7 @@ const UserCollectionsTab = props => {
         setUpdatedData([...response.data]);
         setInitialLoading(false);
       } catch (err) {
-        console.log(err);
+        setError(true);
         setInitialLoading(false);
       }
     };
@@ -39,6 +42,7 @@ const UserCollectionsTab = props => {
 
   const pullToRefreshHandler = () => {
     setRefreshing(true);
+    setError(false);
     setInitialLoading(true);
     page.current = 1;
     const getImages = async () => {
@@ -56,7 +60,7 @@ const UserCollectionsTab = props => {
         setInitialLoading(false);
         setRefreshing(false);
       } catch (err) {
-        console.log(err);
+        setError(true);
         setInitialLoading(false);
         setRefreshing(false);
       }
@@ -65,6 +69,7 @@ const UserCollectionsTab = props => {
   };
 
   const fetchMoreImages = () => {
+    setError(false);
     const getImages = async () => {
       let response;
       try {
@@ -79,7 +84,7 @@ const UserCollectionsTab = props => {
         setUpdatedData(data => [...data, ...response.data]);
         setInitialLoading(false);
       } catch (err) {
-        console.log(err);
+        setError(true);
         setInitialLoading(false);
       }
     };
@@ -87,11 +92,19 @@ const UserCollectionsTab = props => {
     getImages();
   };
 
-
   return (
     <View style={styles.main}>
       {initialLoading ? (
         <ActivityIndicator size="large" color="black" />
+      ) : error ? (
+        <FlatList
+          style={{marginTop: 100}}
+          data={[1]}
+          renderItem={() => <ErrorImage text="Something Went Wrong..." />}
+          refreshing={refreshing}
+          onRefresh={pullToRefreshHandler}
+          keyExtractor={item => Math.random()}
+        />
       ) : (
         <FlatList
           style={{width: Dimensions.get('window').width}}
