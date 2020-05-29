@@ -34,6 +34,7 @@ export const fetchImages =(order_by ,page) => {
       });
     } catch (err) {
       console.log(err);
+      return;
     }
     //console.log("RESPONSE", response.data)
     dispatch({
@@ -56,6 +57,7 @@ export const fetchCollectionsAll = page => {
       });
     } catch (err) {
       console.log(err);
+      return;
     }
 
     dispatch({
@@ -78,6 +80,7 @@ export const fetchCollectionsFeatured = page => {
       });
     } catch (err) {
       console.log(err);
+      return
     }
 
     dispatch({

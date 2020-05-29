@@ -12,11 +12,13 @@ import HeaderButtonComponent from '../components/HeaderButton';
 import ProfileIcon from '../components/ProfileIcon';
 import {AccessKey, getGuest} from '../config/apiConfig';
 import ImageTile from '../components/ImageTile';
+import ErrorImage from '../components/ErrorImage';
 
 const CollectionDetailScreen = props => {
   const [initialLoading, setInitialLoading] = useState(false);
   const [updatedData, setUpdatedData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState({isError:false, msg:null})
   const item = props.route.params.item;
   const page = useRef(1);
   useEffect(() => {
@@ -46,10 +48,11 @@ const CollectionDetailScreen = props => {
           },
         });
         page.current = page.current + 1;
+        setError({isError:false, msg:null})
         setUpdatedData([...response.data]);
         setInitialLoading(false);
       } catch (err) {
-        console.log(err);
+        setError({isError:true, msg:err[0].Error})
         setInitialLoading(false);
       }
     };
@@ -69,9 +72,11 @@ const CollectionDetailScreen = props => {
           },
         });
         page.current = page.current + 1;
+        setError({isError:false, msg:null})
         setUpdatedData(data => [...data, ...response.data]);
       } catch (err) {
         console.log(err);
+        setError({isError:true, msg:err[0].Error})
       }
     };
     getImages();
@@ -95,15 +100,17 @@ const CollectionDetailScreen = props => {
         page.current = page.current + 1;
         setUpdatedData([...response.data]);
         setInitialLoading(false);
-        setRefreshing(false)
+        setRefreshing(false);
+        setError({isError:false, msg:null})
       } catch (err) {
         console.log(err);
         setInitialLoading(false);
         setRefreshing(false);
+        setError({isError:true, msg:err[0].Error})
       }
     };
     getImages();
-  }
+  };
 
   return (
     <View style={styles.main}>
@@ -144,6 +151,15 @@ const CollectionDetailScreen = props => {
           color="grey"
           size="large"
         />
+      ) : updatedData.length === 0 || error.isError ? (
+        
+          <FlatList
+          data={[1]}
+          refreshing={refreshing}
+          onRefresh={pullToRefreshHandler}
+          renderItem={itemData => <ErrorImage text={error.isError ? error.msg : "Nothing here!"} />}
+          keyExtractor={item => item} />
+        
       ) : (
         <FlatList
           data={updatedData}

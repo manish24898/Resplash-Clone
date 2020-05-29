@@ -1,7 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, View, Animated, Dimensions} from 'react-native';
 import ProfileIcon from '../../components/ProfileIcon';
-import {getGuest, AccessKey} from '../../config/apiConfig';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {useCollapsibleStack} from 'react-navigation-collapsible';
 import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
@@ -10,27 +9,31 @@ import UserCollectionsTab from '../Profile/UserCollectionsTab';
 import UserLikesTab from '../Profile/UserLikesTab';
 
 const renderTabBar = props => {
-  const renderLabel = ({ route, focused, color }) => (
-    <Text style={{ color, margin: 2}}>
-      {route.title}
-    </Text>)
+  const renderLabel = ({route, focused, color}) => (
+    <Text style={{color, margin: 2}}>{route.title}</Text>
+  );
 
-  return <TabBar
-    {...props}
-    indicatorStyle={{backgroundColor: 'black'}}
-    style={{backgroundColor: 'white'}}
-    renderLabel={renderLabel}
-    activeColor="black"
-    inactiveColor="grey"
-    
-  />
+  return (
+    <TabBar
+      {...props}
+      indicatorStyle={{backgroundColor: 'black'}}
+      style={{backgroundColor: 'white'}}
+      renderLabel={renderLabel}
+      activeColor="black"
+      inactiveColor="grey"
+    />
+  );
 };
 
 const InfoContainer = props => {
   return (
     <View style={{flexDirection: 'row', padding: 2}}>
       <View>
-        <Entypo name={props.iconName} color="black" size={props.iconSize ? props.iconSize : 18} />
+        <Entypo
+          name={props.iconName}
+          color="black"
+          size={props.iconSize ? props.iconSize : 18}
+        />
       </View>
       <View
         style={{
@@ -45,23 +48,33 @@ const InfoContainer = props => {
 };
 
 const ProfileScreen = props => {
+  const user = props.route.params.user;
   const [index, setIndex] = React.useState(0);
+
   const [routes] = React.useState([
-    {key: 'photos', title: '99 Photos'},
-    {key: 'likes', title: '99 Likes'},
-    {key: 'collections', title: '99 Collections'},
+    {key: 'photos', title: `${user.total_photos} Photos`},
+    {key: 'likes', title: `${user.total_likes} Likes`},
+    {key: 'collections', title: `${user.total_collections} Collections`},
   ]);
 
-  const renderScene = SceneMap({
-    photos: UserPhotosTab,
-    likes: UserLikesTab,
-    collections: UserCollectionsTab,
-  });
-  const user = props.route.params.user;
+  const renderScene = ({route}) => {
+    switch (route.key) {
+      case 'photos':
+        return <UserPhotosTab username={user.username} navigation={props.navigation} />;
+      case 'likes':
+        return <UserLikesTab username={user.username} navigation={props.navigation} />;
+      case 'collections':
+        return <UserCollectionsTab username={user.username} navigation={props.navigation} />;
+      default:
+        return null;
+    }
+  };
+
   const headerTitle = user.last_name
     ? user.first_name + ' ' + user.last_name
     : user.first_name;
 
+  //console.log(user)
   const {
     onScroll /* Event handler */,
     containerPaddingTop /* number */,
@@ -69,7 +82,6 @@ const ProfileScreen = props => {
     y,
   } = useCollapsibleStack();
 
-  const a = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
   useEffect(() => {
     props.navigation.setOptions({
       headerTitle,
@@ -108,18 +120,18 @@ const ProfileScreen = props => {
           </View>
         </View>
         <View style={styles.bio}>
-          <Text style={{textAlign:'center'}}>{user.bio}</Text>
+          <Text style={{textAlign: 'center'}}>{user.bio}</Text>
         </View>
       </View>
 
-      <View style={{height:Dimensions.get('window').height}}>
+      <View style={{height: Dimensions.get('window').height}}>
         <TabView
           renderTabBar={renderTabBar}
           navigationState={{index, routes}}
           renderScene={renderScene}
           onIndexChange={setIndex}
-          //initialLayout={{width: Dimensions.get('window').width}}
-          swipeEnabled
+          //swipeEnabled
+          children={<View />}
         />
       </View>
     </Animated.ScrollView>
