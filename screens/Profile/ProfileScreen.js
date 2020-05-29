@@ -7,6 +7,8 @@ import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import UserPhotosTab from '../Profile/UserPhotosTab';
 import UserCollectionsTab from '../Profile/UserCollectionsTab';
 import UserLikesTab from '../Profile/UserLikesTab';
+import {HeaderButtons, Item} from 'react-navigation-header-buttons'
+import HeaderButtonComponent from '../../components/HeaderButton'
 
 const renderTabBar = props => {
   const renderLabel = ({route, focused, color}) => (
@@ -88,8 +90,14 @@ const ProfileScreen = props => {
       headerTitleContainerStyle: {
         width: '50%',
       },
+      headerRight: () => (
+        <HeaderButtons HeaderButtonComponent={HeaderButtonComponent}>
+          <Item title="globe" iconName="md-globe" onPress={() => {}} />
+        </HeaderButtons>
+      ),
     });
   }, []);
+
 
   return (
     <Animated.ScrollView
