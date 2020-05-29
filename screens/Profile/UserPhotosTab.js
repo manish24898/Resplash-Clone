@@ -1,20 +1,19 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-const ProfileScreen = (props) => {
+const UserPhotosTab = (props) => {
     return (
         <View style={styles.main}>
-            <Text>Profile Screen</Text>
+            
         </View>
     )
 }
 
-export default ProfileScreen
+export default UserPhotosTab
 
 const styles = StyleSheet.create({
     main:{
         flex:1,
-        justifyContent:'center',
-        alignItems:'center'
+        backgroundColor:'green'
     }
 })

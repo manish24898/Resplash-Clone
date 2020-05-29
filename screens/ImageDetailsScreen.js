@@ -271,8 +271,8 @@ const ImageDetailsScreen = props => {
               <TouchableWithoutFeedback
                 style={{flex: 1}}
                 onPress={() => {
-                console.log("here", item.user)
-                  props.navigation.navigate('Profile')
+                //console.log("here", item)
+                  props.navigation.navigate('Profile', {user:item.user})
                 }}>
                 <View
                   style={{

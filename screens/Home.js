@@ -9,6 +9,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const HomeScreen = props => {
   const [intialLoading, setInitialLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
   const page = useRef(1);
   const dispatch = useDispatch();
   const updatedData = useSelector(state => state.images.images);
@@ -29,6 +31,26 @@ const HomeScreen = props => {
      });
   }, [reload]);
 
+  const pullToRefreshHandler = () => {
+    setRefreshing(true);
+    setInitialLoading(true);
+
+    dispatch(MainActions.resetImages()).then(() => {
+      let loader = props.route.params.loadHome;
+      page.current = 1
+       dispatch(loader(page.current)).then(() => {
+         page.current = page.current + 1;
+         setInitialLoading(false)
+         setRefreshing(false)
+       }).catch((err) => {
+         setInitialLoading(false);
+         setRefreshing(false)
+       });
+    }).catch((err) => {
+      setRefreshing(false)
+      setInitialLoading(false);
+    });
+  };
 
   const fetchMoreImages = () => {
     let loader = props.route.params.loadHome;
@@ -52,6 +74,8 @@ const HomeScreen = props => {
         )}
         onEndReachedThreshold={1}
         onEndReached={fetchMoreImages}
+        refreshing={refreshing}
+          onRefresh={pullToRefreshHandler}
       />}
       
       <FloatingAction

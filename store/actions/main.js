@@ -5,13 +5,17 @@ export const RESET_IMAGES = 'RESET_IMAGES';
 export const RESET_COLLECTIONS = 'RESET_COLLECTIONS'
 
 export const resetImages = () => {
-  return {
-    type: RESET_IMAGES,
+  return async dispatch => {
+    dispatch({
+      type: RESET_IMAGES,
+    })
   }
 }
 export const resetCollections = () => {
-  return {
-    type: RESET_COLLECTIONS,
+  return async dispatch => {
+    dispatch({
+      type: RESET_COLLECTIONS,
+    })
   }
 }
 export const fetchImages =(order_by ,page) => {

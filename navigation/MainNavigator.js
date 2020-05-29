@@ -8,6 +8,7 @@ import * as MainActions from '../store/actions/main';
 import CollectionsScreen from '../screens/CollectionsScreen';
 import Menu, {MenuItem} from 'react-native-material-menu';
 import CustomDrawer from '../components/CustomDrawer';
+import {createCollapsibleStack} from 'react-navigation-collapsible';
 import {
   View,
   Text,
@@ -16,7 +17,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
-import {HeaderButtons, Item, HiddenItem, OverflowMenu, OverflowMenuProvider, overflowMenuPressHandlerPopupMenu} from 'react-navigation-header-buttons';
+import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import CustomHeaderButtom from '../components/HeaderButton';
 import ImageDetailsScreen from '../screens/ImageDetailsScreen';
 import CollectionDetailScreen from '../screens/CollectionDetailScreen';
@@ -29,7 +30,7 @@ import SupportDevelopmentScreen from '../screens/SupportDevelopmentScreen';
 import AboutScreen from '../screens/AboutScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import AddAccountScreen from '../screens/AddAcountScreen';
-import ProfileScreen from '../screens/ProfileScreen'
+import ProfileScreen from '../screens/Profile/ProfileScreen';
 const TouchableCmp =
   Platform.OS === 'android' && Platform.Version >= 21
     ? TouchableNativeFeedback
@@ -125,8 +126,11 @@ const HomeStackNavigator = ({navigation, route}) => {
   }, [homeFunc]);
 
   return (
-    <OverflowMenuProvider>
-    <StackNavigator.Navigator>
+    <StackNavigator.Navigator screenOptions={{
+      headerStyle: {
+        backgroundColor: 'white',
+      },
+    }}>
       <StackNavigator.Screen
         name="Resplash"
         component={HomeTabs}
@@ -201,7 +205,7 @@ const HomeStackNavigator = ({navigation, route}) => {
                       <Text>{item.name}</Text>
                     </MenuItem>
                   ))}
-                </Menu> 
+                </Menu>
               </View>
             ),
           };
@@ -221,28 +225,17 @@ const HomeStackNavigator = ({navigation, route}) => {
         name="AutoWallpaper"
         component={AutoWallpaperScreen}
       />
-      <StackNavigator.Screen
-        name="About"
-        component={AboutScreen}
-      />
-      <StackNavigator.Screen
-        name="Settings"
-        component={SettingsScreen}
-      />
+      <StackNavigator.Screen name="About" component={AboutScreen} />
+      <StackNavigator.Screen name="Settings" component={SettingsScreen} />
       <StackNavigator.Screen
         name="SupportDevelopment"
         component={SupportDevelopmentScreen}
       />
-      <StackNavigator.Screen
-        name="AddAccount"
-        component={AddAccountScreen}
-      />
-      <StackNavigator.Screen
-        name="Profile"
-        component={ProfileScreen}
-      />
+      <StackNavigator.Screen name="AddAccount" component={AddAccountScreen} />
+      {createCollapsibleStack(
+        <StackNavigator.Screen name="Profile" component={ProfileScreen} />, {collapsedColor:'white'}
+      )}
     </StackNavigator.Navigator>
-    </OverflowMenuProvider>
   );
 };
 
@@ -256,10 +249,9 @@ const DrawerNavigator = () => {
         labelStyle: {
           fontWeight: 'bold',
         },
-      }}
-    >
+      }}>
       <Drawer.Screen name="ResplashDrawer" component={HomeStackNavigator} />
-      </Drawer.Navigator>
+    </Drawer.Navigator>
   );
 };
 

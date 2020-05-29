@@ -5,7 +5,7 @@ import {
   View,
   TouchableWithoutFeedback,
   ActivityIndicator,
-  FlatList
+  FlatList,
 } from 'react-native';
 import {HeaderButtons, Item} from 'react-navigation-header-buttons';
 import HeaderButtonComponent from '../components/HeaderButton';
@@ -13,11 +13,10 @@ import ProfileIcon from '../components/ProfileIcon';
 import {AccessKey, getGuest} from '../config/apiConfig';
 import ImageTile from '../components/ImageTile';
 
-
-
 const CollectionDetailScreen = props => {
   const [initialLoading, setInitialLoading] = useState(false);
   const [updatedData, setUpdatedData] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const item = props.route.params.item;
   const page = useRef(1);
   useEffect(() => {
@@ -58,25 +57,52 @@ const CollectionDetailScreen = props => {
     getImages();
   }, []);
 
-
   const fetchMoreImages = () => {
     const getImages = async () => {
-        let response;
-        try {
-          response = await getGuest.get(`collections/${item.id}/photos`, {
-            params: {
-              page: page.current,
-              per_page: 10,
-              client_id: AccessKey,
-            },
-          });
-          page.current = page.current + 1;
-          setUpdatedData(data => [...data, ...response.data]);
-        } catch (err) {
-          console.log(err);
-        }
-      };
-      getImages();
+      let response;
+      try {
+        response = await getGuest.get(`collections/${item.id}/photos`, {
+          params: {
+            page: page.current,
+            per_page: 10,
+            client_id: AccessKey,
+          },
+        });
+        page.current = page.current + 1;
+        setUpdatedData(data => [...data, ...response.data]);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getImages();
+  };
+
+  const pullToRefreshHandler = () => {
+    setRefreshing(true);
+    setInitialLoading(true);
+    page.current = 1;
+
+    const getImages = async () => {
+      let response;
+      try {
+        response = await getGuest.get(`collections/${item.id}/photos`, {
+          params: {
+            page: page.current,
+            per_page: 30,
+            client_id: AccessKey,
+          },
+        });
+        page.current = page.current + 1;
+        setUpdatedData([...response.data]);
+        setInitialLoading(false);
+        setRefreshing(false)
+      } catch (err) {
+        console.log(err);
+        setInitialLoading(false);
+        setRefreshing(false);
+      }
+    };
+    getImages();
   }
 
   return (
@@ -87,7 +113,7 @@ const CollectionDetailScreen = props => {
             <TouchableWithoutFeedback
               style={{flex: 1}}
               onPress={() => {
-                console.log('here');
+                props.navigation.navigate('Profile', {user: item.user});
               }}>
               <View style={styles.profileTabContainerBase}>
                 <Text style={{fontSize: 15, textAlign: 'center'}}>
@@ -103,7 +129,7 @@ const CollectionDetailScreen = props => {
           <TouchableWithoutFeedback
             style={{flex: 1}}
             onPress={() => {
-              console.log('here');
+              props.navigation.navigate('Profile', {user: item.user});
             }}>
             <View style={styles.profileTabContainerBase}>
               <ProfileIcon imageUrl={item.user.profile_image.small} />
@@ -130,9 +156,11 @@ const CollectionDetailScreen = props => {
                 });
               }}
             />
-      )}
+          )}
           onEndReachedThreshold={1}
-        onEndReached={fetchMoreImages}
+          onEndReached={fetchMoreImages}
+          refreshing={refreshing}
+          onRefresh={pullToRefreshHandler}
         />
       )}
     </View>
